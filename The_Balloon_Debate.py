@@ -5,7 +5,7 @@ import random
 
 mainClock = pygame.time.Clock()
 
-# TODO replace globals
+# TODO replace globals , could be done by adding global variables as arguments
 # TODO when space is pressed stop game
 # TODO make full-screen
 # TODO set timer
@@ -26,6 +26,7 @@ background_colour = "#fbb3a7"
 bright_red = (244, 115, 93)
 bright_green =(130, 171, 75)
 pausetime = 1000
+names = []
 # create a screen
 screen = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('The Balloon Debate')
@@ -41,111 +42,6 @@ balloonY = 30
 
 # list of invention
 inventions = ["Money","Selfie-Stick","Computer","Toilet","Phone", "Clock"]
-
-#Dictionary to add players names and give a random invention from the inventions list
-player_invention = {}
-
-
-# class Balloon(pygame.sprite.Sprite):
-#     #sprite for the player
-#     def __init__(self):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image = balloonImg
-#         self.rect = self.image.get_rect()
-#         self.rect.center = (370, 30)
-#
-#
-#     def update(self):
-#         self.rect.y += 5
-#         if self.rect.bottom <= 0:
-#             self.rect.bottom = 0
-#         elif self.rect.bottom >= 390:
-#             self.rect.bottom = 390
-#             # crash()
-
-# class Player():
-#     def __init__(self, player_invention, names, player_amount):
-#         self.player_invention = player_invention
-#         self.names = names
-#         self.player_amount = player_amount
-#
-#
-#     def player_names():
-#         player_enter = True
-#
-#         while player_enter:
-#             for event in pygame.event.get():
-#                 if event.type == pygame.QUIT:
-#                     pygame.quit()
-#                     quit()
-#
-#             screen.blit(background, (0, 0))
-#
-#             inventions = ["Money", "Selfie-Stick", "Computer", "Toilet", "Phone", "TV", "Camera"]
-#
-#             # Dictionary to add players names and give a random invention from the inventions list
-#             global players_dict
-#             players_dict = {}
-#             global names
-#             names = []
-#             player_counter = 0
-#             player_index = 1
-#             invention_reveal_y = 250
-#
-#             num_box = ""
-#             wordBox = ""
-#             while num_box == "":
-#                 instruction_amount = makeLabel("How many players?", 40, 250, 150, text_colour, "Arial", "#fbb3a7")
-#
-#                 showLabel(instruction_amount)
-#                 num_box = makeTextBox(250, 200, 300, 0, "Enter number of players", 30, 24)
-#
-#                 showTextBox(num_box)
-#                 # global player_amount
-#                 player_amount = textBoxInput(num_box)
-#                 print(player_amount)
-#             if len(player_amount) != 0:
-#                 hideLabel(instruction_amount)
-#                 hideTextBox(num_box)
-#                 screen.blit(background, (0, 0))
-#                 player_amount = int(player_amount)
-#                 # print(type(player_amount))
-#                 # print(type(player_counter))
-#                 while player_counter != player_amount:
-#                     # player = input(f"Player {player_index}, Please enter your name\n>> ")
-#
-#                     instructionLabel = makeLabel(f"Player {player_index} please enter your name", 40, 150, 150,
-#                                                  text_colour, "Arial", background_colour)
-#                     showLabel(instructionLabel)
-#                     wordBox = makeTextBox(250, 200, 300, 0, "Enter your name here", 30, 24)
-#                     player = textBoxInput(wordBox)
-#                     player = player.upper()
-#                     names.append(player)
-#                     print(player)
-#                     player_invention[player] = random.choice(inventions)
-#                     inventions.remove(player_invention[player])
-#                     player_counter += 1
-#
-#                     print(player_counter)
-#                     player_index += 1
-#                     # Delete inventon from list so doesn't repeat
-#                     # global invention_reveal
-#                     invention_reveal = makeLabel(f"{player}, Your invention is: {player_invention[player]}", 40, 200,
-#                                                  invention_reveal_y, text_colour, "Arial", background_colour)
-#                     invention_reveal_y += 50
-#                     showLabel(invention_reveal)
-#                     pause(pausetime)
-#                     hideLabel(invention_reveal)
-#                     # print(f"{player}, Your invention is: {Player_names[player]}")
-#                     hideLabel(instructionLabel)
-#                     screen.blit(background, (0, 0))
-#                     # hideLabel(invention_reveal)
-#
-#                 pygame.display.update()
-#                 clock.tick(15)
-#                 pause(pausetime)
-#                 game_loop()
-#
 
 
 def balloon(x, y):
@@ -205,8 +101,8 @@ def player_names():
         # Dictionary to add players names and give a random invention from the inventions list
         global player_invention
         player_invention = {}
-        global names
-        names = []
+        # global names
+        # names = []
         player_counter = 0
         player_index = 1
         invention_reveal_y = 250
@@ -266,7 +162,24 @@ def player_names():
             pause(pausetime)
             game_loop()
 
+def game_time():
+    time_input = ""
+    instruction_time = makeLabel("How long would you like to play?", 40, 250, 150, text_colour, "Arial", "#fbb3a7")
 
+    showLabel(instruction_time)
+    while not time_input.isdigit():
+
+        time_box = makeTextBox(250, 200, 300, 0, "Enter desired time here", 30, 24)
+
+        time_input = textBoxInput(time_box)
+
+    time_imput = time_input * 60000
+    # for the time in time_input fall_rate is
+    # ballonY += fall_rate
+    # fps = 30
+    # ballonY start position is y 30
+    # end pos is 390
+    # time
 
 def player_vote():
     player_enter = True
@@ -361,7 +274,7 @@ def input_box():
     showTextBox(wordBox)
     entry = textBoxInput(wordBox)
 
-# For buttons
+
 def game_loop():
     global balloonX
     global balloonY
@@ -392,8 +305,8 @@ def game_loop():
         balloon(balloonX, balloonY)
         pygame.display.update()
         clock.tick(30)
-# Game loop
 
+# Finds the coordinates of play and quit buttons.
 def button(msg, x, y, width, height, inactive_col, active_col, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -402,11 +315,7 @@ def button(msg, x, y, width, height, inactive_col, active_col, action=None):
         pygame.draw.rect(screen, active_col, (x, y, width, height))
         if click[0] == 1 and action != None:
             action()
-            # if action == "play":
-            #     game_loop()
-            # elif action == "quit":
-            #     pygame.quit()
-            #     quit()
+
 
     else:
         pygame.draw.rect(screen, inactive_col, (x, y, width, height))
@@ -416,21 +325,8 @@ def button(msg, x, y, width, height, inactive_col, active_col, action=None):
     TextRect.center = ((x + (width / 2)), (y + (height / 2)))
     screen.blit(TextSurf, TextRect)
 
-# def player_name():
-#     #when user selects play the button calls this function. It pops up a window that ask
-#     #how many users are playing (with a select down menu or just enter number if easier) or
-#     it asks for player name until they press play
-#
-#     #The name entered gets added to the dict and a random item is appended to their value
-#     #asks to set timer, this value is taken and determines how fast the balloon falls to the ground.
-
 
 pygame.init()
 
-# all_sprites = pygame.sprite.Group()
-# player = Player()
-# all_sprites.add(player)
-
 game_intro()
 
-# game_loop()
