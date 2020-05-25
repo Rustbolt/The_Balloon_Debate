@@ -32,6 +32,7 @@ screen = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('The Balloon Debate')
 clock = pygame.time.Clock()
 
+
 # Background
 background = pygame.image.load('background.png')
 
@@ -159,27 +160,45 @@ def player_names():
 
             pygame.display.update()
             clock.tick(15)
+            hideTextBox(wordBox)
             pause(pausetime)
-            game_loop()
+            # game_loop()
+            game_time()
 
 def game_time():
     time_input = ""
-    instruction_time = makeLabel("How long would you like to play?", 40, 250, 150, text_colour, "Arial", "#fbb3a7")
+    player_enter = True
 
-    showLabel(instruction_time)
-    while not time_input.isdigit():
+    while player_enter:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
 
-        time_box = makeTextBox(250, 200, 300, 0, "Enter desired time here", 30, 24)
+        screen.blit(background, (0, 0))
+        instruction_time = makeLabel("How long would you like to play for?", 40, 250, 150, text_colour, "Arial", "#fbb3a7")
+
+        showLabel(instruction_time)
+        while not time_input.isdigit():
+
+
+            time_box = makeTextBox(250, 200, 300, 0, "Enter desired time here", 30, 24)
+            showTextBox(time_box)
 
         time_input = textBoxInput(time_box)
 
-    time_imput = time_input * 60000
+        time_input = time_input * 60000
     # for the time in time_input fall_rate is
     # ballonY += fall_rate
     # fps = 30
     # ballonY start position is y 30
     # end pos is 390
     # time
+    pygame.display.update()
+    clock.tick(15)
+    pause(pausetime)
+    game_loop()
+
 
 def player_vote():
     player_enter = True
@@ -275,11 +294,12 @@ def input_box():
     entry = textBoxInput(wordBox)
 
 
-def game_loop():
+def game_loop(t):
     global balloonX
     global balloonY
     # balloonX = 370
     # balloonY = 30
+    pygame.time.set_timer(USEREVENT + 1, t)
 
     running = True
     while running:
@@ -292,6 +312,13 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == USEREVENT+1:
+                balloonY = 390
+                crash()
+                pause(pausetime)
+                player_vote()
+                pause(pausetime)
+
 
         if balloonY <=0:
             balloonY = 0
