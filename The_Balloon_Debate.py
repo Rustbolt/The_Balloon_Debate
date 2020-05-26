@@ -5,10 +5,10 @@ import random
 
 mainClock = pygame.time.Clock()
 
-# TODO replace globals , could be done by adding global variables as arguments
+
 # TODO when space is pressed stop game
 # TODO make full-screen
-# TODO set timer
+
 
 # To initialise a game in pygame
 
@@ -31,6 +31,7 @@ names = []
 screen = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('The Balloon Debate')
 clock = pygame.time.Clock()
+USEREVENT = pygame.USEREVENT
 
 
 # Background
@@ -161,8 +162,6 @@ def player_names():
             pygame.display.update()
             clock.tick(15)
             hideTextBox(wordBox)
-            pause(pausetime)
-            # game_loop()
             game_time()
 
 def game_time():
@@ -185,20 +184,25 @@ def game_time():
             time_box = makeTextBox(250, 200, 300, 0, "Enter desired time here", 30, 24)
             showTextBox(time_box)
 
-        time_input = textBoxInput(time_box)
+            time_input = textBoxInput(time_box)
 
-        time_input = time_input * 60000
-    # for the time in time_input fall_rate is
-    # ballonY += fall_rate
-    # fps = 30
-    # ballonY start position is y 30
-    # end pos is 390
-    # time
-    pygame.display.update()
-    clock.tick(15)
-    pause(pausetime)
-    game_loop()
+        duration = float(time_input)
+        time_input = int(time_input) * 60000
+        print(duration)
 
+        # for the time in time_input fall_rate is
+        # ballonY += fall_rate
+        # fps = 30
+        # ballonY start position is y 30
+        # end pos is 390
+        # time
+        pygame.display.update()
+        clock.tick(15)
+        pause(pausetime)
+        game_loop(time_input, duration)
+
+def pause_game():
+    message_display('Paused')
 
 def player_vote():
     player_enter = True
@@ -294,19 +298,21 @@ def input_box():
     entry = textBoxInput(wordBox)
 
 
-def game_loop(t):
+def game_loop(t, d):
     global balloonX
     global balloonY
     # balloonX = 370
     # balloonY = 30
-    pygame.time.set_timer(USEREVENT + 1, t)
+    pygame.time.set_timer(USEREVENT+1, t)
+
+    balloon_fallrate = .41 / d
 
     running = True
     while running:
 
         screen.fill((0, 0, 0))
         # global balloonY
-        balloonY += 5
+        balloonY += balloon_fallrate
         # Background image
         screen.blit(background, (0, 0))
         for event in pygame.event.get():
@@ -318,16 +324,27 @@ def game_loop(t):
                 pause(pausetime)
                 player_vote()
                 pause(pausetime)
+            # Press enter to skip to voting
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_RETURN]:
+                player_vote()
+            #press space to pause the game
+            if keys[pygame.K_SPACE]:
+                pause_game()
+            # if event.type == pygame.K_:
+            #     paused
+            # if event.type == keydown enter key:
+            #     player_vote()
 
 
         if balloonY <=0:
             balloonY = 0
         elif balloonY >= 390:
             balloonY = 390
-            crash()
-            pause(pausetime)
-            player_vote()
-            pause(pausetime)
+            # crash()
+            # pause(pausetime)
+            # player_vote()
+            # pause(pausetime)
 
         balloon(balloonX, balloonY)
         pygame.display.update()
