@@ -6,7 +6,6 @@ import random
 mainClock = pygame.time.Clock()
 
 
-# TODO when space is pressed stop game
 # TODO make full-screen
 
 
@@ -26,6 +25,7 @@ background_colour = "#fbb3a7"
 bright_red = (244, 115, 93)
 bright_green =(130, 171, 75)
 pausetime = 1000
+endpause = 5000
 names = []
 # create a screen
 screen = pygame.display.set_mode((display_width, display_height))
@@ -199,12 +199,14 @@ def game_time():
         pygame.display.update()
         clock.tick(15)
         pause(pausetime)
+        hideLabel(instruction_time)
+        hideTextBox(time_box)
         game_loop(time_input, duration)
 
 def pause_game():
     paused = True
 
-    while paused==True:
+    while paused:
         for event in pygame.event.get():
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
@@ -258,7 +260,7 @@ def player_vote():
                     votesdict[vote] = 1
                 player_counter += 1
                 print(f"player counter ..{player_counter}")
-                hideLabel(instructionLabel)
+
         #Check who got the most votes outside the while loop
         for name in votesdict:
             if votesdict[name] > votesdict[loser]:
@@ -271,6 +273,7 @@ def player_vote():
         if len(draw) == 3:
             hideLabel(instructionLabel)
             hideTextBox(voteBox)
+            global loser_reveal
             loser_reveal = makeLabel(
                 f"There is a draw between {player_invention[draw[1]]} and {player_invention[draw[2]]}.Play Rock, Paper, Scissors to decide who stays.",
                 20, 20, 350, "#5f4c46", "Arial", background_colour)
@@ -292,12 +295,44 @@ def player_vote():
         print(loser_reveal)
         pygame.display.update()
         clock.tick(15)
-        pause(pausetime)
+        screen.blit(background, (0, 0))
+        pause(endpause)
+        hideLabel(instructionLabel)
+        hideTextBox(voteBox)
+        hideLabel(loser_reveal)
+        hideLabel(instructionLabel)
+        blank = makeLabel("", 35, 10, 350, "#5f4c46", "Arial", background_colour)
+        showLabel(blank)
+        play_again()
+
+
 
 # When Balloon reaches end
 def crash():
     # global balloonY
     message_display('Time is up!')
+
+def play_again():
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        screen.blit(background, (0, 0))
+        largeText = pygame.font.Font('freesansbold.ttf', 50)
+        TextSurf, TextRect = text_objects("Play Again?", largeText)
+        TextRect.center = ((display_width / 2), (display_height / 2))
+        screen.blit(background, (0, 0))
+        screen.blit(TextSurf, TextRect)
+
+
+        button("Play", 150, 450, 100, 50, green, bright_green, player_names)
+        button("Quit", 550, 450, 100, 50, red, bright_red, quit_game)
+        pygame.display.update()
+        clock.tick(15)
+
 
 
 # A quit function so that i'm not calling two functions in other places when i want to quit
