@@ -202,7 +202,23 @@ def game_time():
         game_loop(time_input, duration)
 
 def pause_game():
-    message_display('Paused')
+    paused = True
+
+    while paused==True:
+        for event in pygame.event.get():
+            keys = pygame.key.get_pressed()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                paused = False
+
+
+        message_display('Paused')
+
+    pygame.display.update()
+    clock.tick(5)
 
 def player_vote():
     player_enter = True
@@ -274,8 +290,8 @@ def player_vote():
                                      "#5f4c46", "Arial", background_colour)
             showLabel(loser_reveal)
         print(loser_reveal)
-        # pygame.display.update()
-        # clock.tick(15)
+        pygame.display.update()
+        clock.tick(15)
         pause(pausetime)
 
 # When Balloon reaches end
@@ -301,6 +317,7 @@ def input_box():
 def game_loop(t, d):
     global balloonX
     global balloonY
+    global paused
     # balloonX = 370
     # balloonY = 30
     pygame.time.set_timer(USEREVENT+1, t)
@@ -318,7 +335,7 @@ def game_loop(t, d):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == USEREVENT+1:
+            elif event.type == USEREVENT+1:
                 balloonY = 390
                 crash()
                 pause(pausetime)
@@ -329,7 +346,7 @@ def game_loop(t, d):
             if keys[pygame.K_RETURN]:
                 player_vote()
             #press space to pause the game
-            if keys[pygame.K_SPACE]:
+            elif keys[pygame.K_SPACE]:
                 pause_game()
             # if event.type == pygame.K_:
             #     paused
