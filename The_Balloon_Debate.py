@@ -10,8 +10,7 @@ mainClock = pygame.time.Clock()
 
 
 # To initialise a game in pygame
-
-screenSize(800,600)
+screenSize(800,600,xpos=None, ypos=None, fullscreen=False)
 display_width = 800
 display_height = 600
 
@@ -20,7 +19,10 @@ black = (0, 0, 0)
 white = (0, 0, 0)
 red =  (240, 78, 65)
 green =(107, 153, 53)
+
 text_colour = "#5f4c46"
+text_colour_rgb = (95,76,70)
+text_colour_light = (143,129,125)
 background_colour = "#fbb3a7"
 bright_red = (244, 115, 93)
 bright_green =(130, 171, 75)
@@ -44,6 +46,11 @@ balloonY = 30
 
 # list of invention
 inventions = ["Money","Selfie-Stick","Computer","Toilet","Phone", "Clock"]
+about = ["You and your classmates have unexpectadly found yourselves in a hot air ballon but the balloon is going to crash.",
+         "The only way to save the majority is for one of you to jump. The twist is that you're not people, you're inventions",
+         "and if you jump the human race will haveto survive without you.",
+         "Each of you must put foward your case why you are the most important invention wile finding reasons why the other inventions aren't as important as you",
+         "When the time is up or you press return you will vote to decide who goes overboard."]
 
 
 def balloon(x, y):
@@ -54,6 +61,9 @@ def text_objects(text, font):
     textSurface = font.render(text, True, (255, 255, 133))
     return textSurface, textSurface.get_rect()
 
+def text_objects_howto(text, font):
+    textSurface = font.render(text, True, (95,76,70))
+    return textSurface, textSurface.get_rect()
 
 def message_display(text):
     largeText = pygame.font.Font('freesansbold.ttf', 115)
@@ -63,6 +73,13 @@ def message_display(text):
     pygame.display.update()
     time.sleep(1)
 
+def instruction_message(text, height):
+    largeText = pygame.font.Font('freesansbold.ttf', 15)
+    TextSurf, TextRect = text_objects_howto(text, largeText)
+    TextRect.center = ((display_width / 2), height)
+    screen.blit(TextSurf, TextRect)
+    pygame.display.update()
+    clock.tick(15)
 
 def game_intro():
     intro = True
@@ -79,11 +96,47 @@ def game_intro():
         screen.blit(TextSurf, TextRect)
 
         button("Play", 150, 450, 100, 50, green, bright_green, player_names)
+        button("How To Play", 300, 450, 200, 50, text_colour_rgb, text_colour_light, how_to_play)
+        button("Quit", 550, 450, 100, 50, red, bright_red, quit_game)
+
+
+        pygame.display.update()
+        clock.tick(15)
+
+def how_to_play():
+    new_line = 100
+
+
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        for index in range(0, len(about) - 1):
+            instruction_message(about[index], new_line)
+            while new_line < 400:
+                new_line += 50
+        screen.blit(background, (0, 0))
+
+
+        button("Play", 150, 450, 100, 50, green, bright_green, player_names)
         button("Quit", 550, 450, 100, 50, red, bright_red, quit_game)
 
         pygame.display.update()
         clock.tick(15)
 
+
+
+#You and your classmates have unexpectadly found yourselves in a hot air ballon but the balloon is going to crash.
+#The only way to save the majority is for one of you to jump. The twist is that you're not people, you're inventions
+#and if you jump the human race will haveto survive without you.
+
+#Each of you must put foward your case why you are the most important invention wile finding reasons why the other inventions aren't as important as you
+
+#When the time is up or you press return you will vote to decide who goes overboard.
 
 def player_names():
     player_enter = True
