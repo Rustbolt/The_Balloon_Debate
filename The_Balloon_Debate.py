@@ -2,6 +2,8 @@ from pygame_functions import *
 import pygame
 import time
 import random
+import sys
+
 
 mainClock = pygame.time.Clock()
 
@@ -10,9 +12,13 @@ mainClock = pygame.time.Clock()
 
 
 # To initialise a game in pygame
-screenSize(800,600,xpos=None, ypos=None, fullscreen=False)
+screen = ''
 display_width = 800
 display_height = 600
+fullscreen = False
+monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
+
+
 
 # Colours used in game
 black = (0, 0, 0)
@@ -30,7 +36,7 @@ pausetime = 1000
 endpause = 5000
 names = []
 # create a screen
-screen = pygame.display.set_mode((display_width, display_height))
+screen = pygame.display.set_mode((display_width, display_height), pygame.RESIZABLE)
 pygame.display.set_caption('The Balloon Debate')
 clock = pygame.time.Clock()
 USEREVENT = pygame.USEREVENT
@@ -82,6 +88,8 @@ def instruction_message(text, height):
     clock.tick(15)
 
 def game_intro():
+    global screen
+    fullscreen = False
     intro = True
 
     while intro:
@@ -89,6 +97,13 @@ def game_intro():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_f]:
+                fullscreen = not fullscreen
+                if fullscreen:
+                    screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
+                else:
+                    screen = pygame.display.set_mode((screen.get_width(), screen.get_height()), pygame.RESIZABLE)
         screen.blit(background, (0, 0))
         largeText = pygame.font.Font('freesansbold.ttf', 50)
         TextSurf, TextRect = text_objects("The Balloon Debate", largeText)
