@@ -2,23 +2,14 @@ from pygame_functions import *
 import pygame
 import time
 import random
-import sys
-
 
 mainClock = pygame.time.Clock()
 
 
-# TODO make full-screen
-
-
 # To initialise a game in pygame
-screen = ''
+screenSize(800,600,xpos=None, ypos=None, fullscreen=False)
 display_width = 800
 display_height = 600
-fullscreen = False
-monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
-
-
 
 # Colours used in game
 black = (0, 0, 0)
@@ -36,7 +27,7 @@ pausetime = 1000
 endpause = 5000
 names = []
 # create a screen
-screen = pygame.display.set_mode((display_width, display_height), pygame.RESIZABLE)
+screen = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('The Balloon Debate')
 clock = pygame.time.Clock()
 USEREVENT = pygame.USEREVENT
@@ -52,10 +43,13 @@ balloonY = 30
 
 # list of invention
 inventions = ["Money","Selfie-Stick","Computer","Toilet","Phone", "Clock"]
-about = ["You and your classmates have unexpectadly found yourselves in a hot air ballon but the balloon is going to crash.",
-         "The only way to save the majority is for one of you to jump. The twist is that you're not people, you're inventions",
-         "and if you jump the human race will haveto survive without you.",
-         "Each of you must put foward your case why you are the most important invention wile finding reasons why the other inventions aren't as important as you",
+about = ["You and your classmates have unexpectadly found yourselves in a hot air balloon",
+         ",but the balloon is going to crash.",
+         "The only way to save the majority is for one of you to jump.",
+         "The twist is that you're not people, you're inventions",
+         ",and if you jump the human race will have to survive without you.",
+         "Each of you must put forward your case why you are the most important invention",
+         ",while finding reasons why the other inventions aren't as important as you.",
          "When the time is up or you press return you will vote to decide who goes overboard."]
 
 
@@ -79,17 +73,15 @@ def message_display(text):
     pygame.display.update()
     time.sleep(1)
 
-def instruction_message(text, height):
-    largeText = pygame.font.Font('freesansbold.ttf', 15)
+def instruction_message(text, height, font):
+    largeText = pygame.font.Font('freesansbold.ttf', font)
     TextSurf, TextRect = text_objects_howto(text, largeText)
     TextRect.center = ((display_width / 2), height)
     screen.blit(TextSurf, TextRect)
     pygame.display.update()
-    clock.tick(15)
+    clock.tick(300)
 
 def game_intro():
-    global screen
-    fullscreen = False
     intro = True
 
     while intro:
@@ -97,13 +89,6 @@ def game_intro():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_f]:
-                fullscreen = not fullscreen
-                if fullscreen:
-                    screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
-                else:
-                    screen = pygame.display.set_mode((screen.get_width(), screen.get_height()), pygame.RESIZABLE)
         screen.blit(background, (0, 0))
         largeText = pygame.font.Font('freesansbold.ttf', 50)
         TextSurf, TextRect = text_objects("The Balloon Debate", largeText)
@@ -119,39 +104,31 @@ def game_intro():
         clock.tick(15)
 
 def how_to_play():
-    new_line = 100
-
+    new_line = 150
+    line_name = 0
 
     intro = True
-
+    text_printed = False
+    screen.blit(background, (0, 0))
+    instruction_message("How To Play", 50, 50)
     while intro:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
-        for index in range(0, len(about) - 1):
-            instruction_message(about[index], new_line)
-            while new_line < 400:
-                new_line += 50
-        screen.blit(background, (0, 0))
-
+        while line_name < 8:
+            for index in range(0, len(about)):
+                instruction_message(about[index], new_line, 18)
+                new_line += 25
+                line_name += 1
 
         button("Play", 150, 450, 100, 50, green, bright_green, player_names)
         button("Quit", 550, 450, 100, 50, red, bright_red, quit_game)
 
         pygame.display.update()
-        clock.tick(15)
+        clock.tick(30)
 
-
-
-#You and your classmates have unexpectadly found yourselves in a hot air ballon but the balloon is going to crash.
-#The only way to save the majority is for one of you to jump. The twist is that you're not people, you're inventions
-#and if you jump the human race will haveto survive without you.
-
-#Each of you must put foward your case why you are the most important invention wile finding reasons why the other inventions aren't as important as you
-
-#When the time is up or you press return you will vote to decide who goes overboard.
 
 def player_names():
     player_enter = True
@@ -163,16 +140,11 @@ def player_names():
                 quit()
 
         screen.blit(background, (0, 0))
-
-
-
         inventions = ["Money", "Selfie-Stick", "Computer", "Toilet", "Phone", "TV", "Camera"]
 
         # Dictionary to add players names and give a random invention from the inventions list
         global player_invention
         player_invention = {}
-        # global names
-        # names = []
         player_counter = 0
         player_index = 1
         invention_reveal_y = 250
@@ -181,16 +153,14 @@ def player_names():
         wordBox = ""
         while num_box == "":
             instruction_amount = makeLabel("How many players?", 40, 250, 150, text_colour, "Arial", "#fbb3a7")
-
-
-
             showLabel(instruction_amount)
-            num_box = makeTextBox(250, 200, 300, 0, "Enter number of players", 30, 24)
 
+            num_box = makeTextBox(250, 200, 300, 0, "Enter number of players", 30, 24)
             showTextBox(num_box)
             global player_amount
             player_amount = textBoxInput(num_box)
-            print(player_amount)
+
+
         if len(player_amount) != 0:
             hideLabel(instruction_amount)
             hideTextBox(num_box)
@@ -222,10 +192,9 @@ def player_names():
                 showLabel(invention_reveal)
                 pause(pausetime)
                 hideLabel(invention_reveal)
-                # print(f"{player}, Your invention is: {Player_names[player]}")
                 hideLabel(instructionLabel)
                 screen.blit(background, (0, 0))
-                # hideLabel(invention_reveal)
+
 
             pygame.display.update()
             clock.tick(15)
@@ -243,27 +212,19 @@ def game_time():
                 quit()
 
         screen.blit(background, (0, 0))
-        instruction_time = makeLabel("How long would you like to play for?", 40, 250, 150, text_colour, "Arial", "#fbb3a7")
-
+        instruction_time = makeLabel("How long would you like to play for?", 40, 150, 150, text_colour, "Arial", "#fbb3a7")
         showLabel(instruction_time)
+
         while not time_input.isdigit():
-
-
             time_box = makeTextBox(250, 200, 300, 0, "Enter desired time here", 30, 24)
             showTextBox(time_box)
-
             time_input = textBoxInput(time_box)
 
+        #Calculate fall time for balloon
         duration = float(time_input)
         time_input = int(time_input) * 60000
         print(duration)
 
-        # for the time in time_input fall_rate is
-        # ballonY += fall_rate
-        # fps = 30
-        # ballonY start position is y 30
-        # end pos is 390
-        # time
         pygame.display.update()
         clock.tick(15)
         pause(pausetime)
@@ -274,7 +235,7 @@ def game_time():
 def pause_game():
     paused = True
 
-    while paused:
+    while paused == True:
         for event in pygame.event.get():
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
@@ -290,6 +251,7 @@ def pause_game():
     pygame.display.update()
     clock.tick(5)
 
+#Takes player votes to reveal the loser.
 def player_vote():
     player_enter = True
 
@@ -299,8 +261,8 @@ def player_vote():
                 pygame.quit()
                 quit()
         screen.blit(background, (0, 0))
-    # global player_amount
-    # Dictionary to add players names and give a random invention from the inventions list
+
+
 
         player_counter = 0
 
@@ -309,15 +271,11 @@ def player_vote():
         draw = []
         big = 0
         print(f"Player amount{player_amount}")
-        # print(type(player_amount))
-        # print(type(player_counter))
-        while player_counter != player_amount:
 
-            # player = input(f"Player {player_index}, Please enter your name\n>> ")
+        while player_counter != player_amount:
             instructionLabel = makeLabel(f"{names[player_counter]} please cast your vote", 40, 250, 150, text_colour, "Arial", background_colour)
             showLabel(instructionLabel)
             voteBox = makeTextBox(250, 200, 300, 0, "Enter your vote here", 30, 24)
-
 
             vote = textBoxInput(voteBox)
             vote = vote.upper()
@@ -357,7 +315,7 @@ def player_vote():
             hideLabel(instructionLabel)
             hideTextBox(voteBox)
             screen.blit(background, (0, 0))
-            loser_reveal = makeLabel(f"{player_invention[loser]} has been thrown overboard by popular vote", 35, 10, 350,
+            loser_reveal = makeLabel(f"{player_invention[loser]} has been thrown overboard by popular vote", 35, 50, 350,
                                      "#5f4c46", "Arial", background_colour)
             showLabel(loser_reveal)
         print(loser_reveal)
