@@ -14,18 +14,22 @@ display_height = 600
 # Colours used in game
 black = (0, 0, 0)
 white = (0, 0, 0)
-red =  (240, 78, 65)
-green =(107, 153, 53)
-
+red = (240, 78, 65)
+green = (107, 153, 53)
 text_colour = "#5f4c46"
 text_colour_rgb = (95,76,70)
 text_colour_light = (143,129,125)
 background_colour = "#fbb3a7"
 bright_red = (244, 115, 93)
-bright_green =(130, 171, 75)
+bright_green = (130, 171, 75)
+
+# pause variables
 pausetime = 1000
 endpause = 5000
+
+#player names
 names = []
+
 # create a screen
 screen = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('The Balloon Debate')
@@ -43,7 +47,8 @@ balloonY = 30
 
 # list of invention
 inventions = ["Money","Selfie-Stick","Computer","Toilet","Phone", "Clock"]
-about = ["You and your classmates have unexpectadly found yourselves in a hot air balloon",
+# how to play
+about = ["You and your classmates have unexpectedly found yourselves in a hot air balloon",
          ",but the balloon is going to crash.",
          "The only way to save the majority is for one of you to jump.",
          "The twist is that you're not people, you're inventions",
@@ -65,6 +70,7 @@ def text_objects_howto(text, font):
     textSurface = font.render(text, True, (95,76,70))
     return textSurface, textSurface.get_rect()
 
+#shows message in middle of screen
 def message_display(text):
     largeText = pygame.font.Font('freesansbold.ttf', 115)
     TextSurf, TextRect = text_objects(text, largeText)
@@ -73,6 +79,7 @@ def message_display(text):
     pygame.display.update()
     time.sleep(1)
 
+#prints out how to play on screen
 def instruction_message(text, height, font):
     largeText = pygame.font.Font('freesansbold.ttf', font)
     TextSurf, TextRect = text_objects_howto(text, largeText)
@@ -91,10 +98,12 @@ def game_intro():
                 quit()
         screen.blit(background, (0, 0))
         largeText = pygame.font.Font('freesansbold.ttf', 50)
+        #prints title
         TextSurf, TextRect = text_objects("The Balloon Debate", largeText)
         TextRect.center = ((display_width / 2), (display_height / 2))
         screen.blit(TextSurf, TextRect)
 
+        #menue buttons
         button("Play", 150, 450, 100, 50, green, bright_green, player_names)
         button("How To Play", 300, 450, 200, 50, text_colour_rgb, text_colour_light, how_to_play)
         button("Quit", 550, 450, 100, 50, red, bright_red, quit_game)
@@ -103,12 +112,12 @@ def game_intro():
         pygame.display.update()
         clock.tick(15)
 
+#if how to play button pressed
 def how_to_play():
     new_line = 150
     line_name = 0
 
     intro = True
-    text_printed = False
     screen.blit(background, (0, 0))
     instruction_message("How To Play", 50, 50)
     while intro:
@@ -116,7 +125,7 @@ def how_to_play():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
+        #prints out the about list
         while line_name < 8:
             for index in range(0, len(about)):
                 instruction_message(about[index], new_line, 18)
@@ -129,7 +138,7 @@ def how_to_play():
         pygame.display.update()
         clock.tick(30)
 
-
+#assigns players inventions and stores names
 def player_names():
     player_enter = True
 
@@ -166,26 +175,26 @@ def player_names():
             hideTextBox(num_box)
             screen.blit(background, (0, 0))
             player_amount = int(player_amount)
-            # print(type(player_amount))
-            # print(type(player_counter))
-            while player_counter != player_amount:
-                # player = input(f"Player {player_index}, Please enter your name\n>> ")
 
+            while player_counter != player_amount:
                 instructionLabel = makeLabel(f"Player {player_index} please enter your name", 40, 150, 150, text_colour, "Arial", background_colour)
                 showLabel(instructionLabel)
                 wordBox = makeTextBox(250, 200, 300, 0, "Enter your name here", 30, 24)
+                #storing players name
                 player = textBoxInput(wordBox)
                 player = player.upper()
                 names.append(player)
                 print(player)
                 player_invention[player] = random.choice(inventions)
+                #takes invention from list so it is not used again
                 inventions.remove(player_invention[player])
                 player_counter += 1
 
                 print(player_counter)
                 player_index += 1
-                # Delete inventon from list so doesn't repeat
+
                 global invention_reveal
+                #tells the player their invention
                 invention_reveal = makeLabel(f"{player}, Your invention is: {player_invention[player]}", 40, 200,
                                              invention_reveal_y, text_colour, "Arial", background_colour)
                 invention_reveal_y += 50
@@ -201,6 +210,7 @@ def player_names():
             hideTextBox(wordBox)
             game_time()
 
+#Asks for game duration
 def game_time():
     time_input = ""
     player_enter = True
@@ -232,6 +242,7 @@ def game_time():
         hideTextBox(time_box)
         game_loop(time_input, duration)
 
+#pauses game using spacebar
 def pause_game():
     paused = True
 
@@ -262,15 +273,12 @@ def player_vote():
                 quit()
         screen.blit(background, (0, 0))
 
-
-
+        #Variables to store votes and loser
         player_counter = 0
-
         votesdict = {"": 0}
         loser = ""
         draw = []
         big = 0
-        print(f"Player amount{player_amount}")
 
         while player_counter != player_amount:
             instructionLabel = makeLabel(f"{names[player_counter]} please cast your vote", 40, 250, 150, text_colour, "Arial", background_colour)
@@ -279,15 +287,16 @@ def player_vote():
 
             vote = textBoxInput(voteBox)
             vote = vote.upper()
+            #check if new vote or not
             if vote in player_invention:
                 if vote in votesdict:
                     votesdict[vote] += 1
                 else:
                     votesdict[vote] = 1
                 player_counter += 1
-                print(f"player counter ..{player_counter}")
 
-        #Check who got the most votes outside the while loop
+
+        #Check who got the most votes outside the for loop
         for name in votesdict:
             if votesdict[name] > votesdict[loser]:
                 loser = name
@@ -338,6 +347,7 @@ def crash():
     # global balloonY
     message_display('Time is up!')
 
+#option to play again
 def play_again():
     intro = True
 
@@ -366,30 +376,23 @@ def quit_game():
     pygame.quit()
     quit()
 
-def input_box():
-    instructionLabel = makeLabel("Please enter your name",40,display_width//2,display_height//2,"blue","yellow")
-    showLabel(instructionLabel)
-
-    wordBox = makeTextBox(10,80,300,0,"Enter your name here",5,24)
-    showTextBox(wordBox)
-    entry = textBoxInput(wordBox)
-
-
+#main loop t d arguments taken from game_time
 def game_loop(t, d):
     global balloonX
     global balloonY
     global paused
-    # balloonX = 370
-    # balloonY = 30
+
+    #sets game timer
     pygame.time.set_timer(USEREVENT+1, t)
 
+    #sets balloon's rate of descent
     balloon_fallrate = .41 / d
 
     running = True
     while running:
 
         screen.fill((0, 0, 0))
-        # global balloonY
+        # how much to move the balloon image along the y axis every framerate
         balloonY += balloon_fallrate
         # Background image
         screen.blit(background, (0, 0))
@@ -409,17 +412,14 @@ def game_loop(t, d):
             #press space to pause the game
             elif keys[pygame.K_SPACE]:
                 pause_game()
-            # if event.type == pygame.K_:
-            #     paused
-            # if event.type == keydown enter key:
-            #     player_vote()
+
 
 
         if balloonY <=0:
             balloonY = 0
         elif balloonY >= 390:
             balloonY = 390
-            # crash()
+            crash()
             # pause(pausetime)
             # player_vote()
             # pause(pausetime)
@@ -428,7 +428,7 @@ def game_loop(t, d):
         pygame.display.update()
         clock.tick(30)
 
-# Finds the coordinates of play and quit buttons.
+# Finds the coordinates of buttons.
 def button(msg, x, y, width, height, inactive_col, active_col, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -446,9 +446,6 @@ def button(msg, x, y, width, height, inactive_col, active_col, action=None):
     TextSurf, TextRect = text_objects(msg, smallText)
     TextRect.center = ((x + (width / 2)), (y + (height / 2)))
     screen.blit(TextSurf, TextRect)
-
-
-pygame.init()
 
 game_intro()
 
