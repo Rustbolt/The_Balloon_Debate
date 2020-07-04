@@ -15,7 +15,7 @@ The game will then reveal the loser, throwing the invention out of the hot air b
 I decided to add a visual element to a roleplaying game I played with my students, to be used in future lessons. This game seemed to most viable. 
 The program has a interactive element with a simple GUI to enter details, but does not restrict students from talking to eachother. 
 Once all their names have been entered, the balloon falls and they can debate amongst themselves. They can look at the screen every once in a while 
-to guess how much time they can left, this puts them on the spot and encourages the students to use more improvised language. 
+to guess how much time they have left, this puts them on the spot and encourages the students to use more improvised language. 
 
 ##  :camera: Gallery
 
